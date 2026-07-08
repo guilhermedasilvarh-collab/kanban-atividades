@@ -1266,6 +1266,34 @@
       var startX = e.clientX;
       var startY = e.clientY;
       var pointerId = e.pointerId;
+
+      // Mouse: no need to disambiguate from scrolling, so start the drag
+      // as soon as the button is held and the pointer moves at all.
+      if (e.pointerType === "mouse") {
+        function cleanupMouse() {
+          card.removeEventListener("pointermove", onMouseMove);
+          card.removeEventListener("pointerup", onMouseUp);
+          card.removeEventListener("pointercancel", onMouseUp);
+        }
+        function onMouseMove(ev) {
+          var dx = ev.clientX - startX;
+          var dy = ev.clientY - startY;
+          if (Math.sqrt(dx * dx + dy * dy) > 3) {
+            cleanupMouse();
+            beginDrag(card, taskId, pointerId, startX, startY);
+            onDragMove(ev);
+          }
+        }
+        function onMouseUp() { cleanupMouse(); }
+
+        card.addEventListener("pointermove", onMouseMove);
+        card.addEventListener("pointerup", onMouseUp);
+        card.addEventListener("pointercancel", onMouseUp);
+        return;
+      }
+
+      // Touch/pen: require a brief hold before dragging so a normal
+      // scroll gesture isn't mistaken for a drag.
       var timer = null;
 
       function cleanupPress() {
