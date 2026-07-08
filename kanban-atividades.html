@@ -8,6 +8,10 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Atividades" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png" />
+<link rel="icon" href="icon-512.png" sizes="512x512" type="image/png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <title>Minhas Atividades — Kanban do dia a dia</title>
 <style>
   :root {
@@ -1467,6 +1471,12 @@
   }, { passive: true });
 
   renderAll();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
 })();
 </script>
 </body>
