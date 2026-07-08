@@ -1129,16 +1129,6 @@
 
   taskTitle.addEventListener("input", updateSaveState);
 
-  // On Android, the on-screen keyboard can visually cover the Save button.
-  // Nudge it back into view once the keyboard has opened.
-  function keepSaveButtonVisible() {
-    setTimeout(function () {
-      sheetSave.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    }, 300);
-  }
-  taskTitle.addEventListener("focus", keepSaveButtonVisible);
-  taskDesc.addEventListener("focus", keepSaveButtonVisible);
-
   sheetSave.addEventListener("click", function () {
     var title = taskTitle.value.trim();
     if (!title) return;
