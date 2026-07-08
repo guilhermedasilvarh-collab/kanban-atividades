@@ -422,7 +422,6 @@
   }
   .icon-btn svg { width: 20px; height: 20px; }
   .icon-btn:active { transform: scale(0.94); }
-  .icon-btn[data-action="delete"]:hover { background: var(--danger-soft); color: var(--danger); }
   .icon-btn[data-action="edit"]:hover { background: var(--accent-soft); color: var(--accent); }
   .icon-btn:disabled { opacity: 0.3; cursor: default; }
   .icon-btn:disabled:active { transform: none; }
@@ -537,6 +536,37 @@
     color: var(--accent-ink);
     transform: translateX(-50%) scale(1.18);
   }
+  .done-zone.celebrate {
+    animation: doneCelebrate 0.55s ease;
+  }
+  @keyframes doneCelebrate {
+    0% { transform: translateX(-50%) scale(1); }
+    35% {
+      transform: translateX(-50%) scale(1.4);
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-ink);
+      box-shadow: 0 0 0 10px rgba(14, 124, 102, 0.18), var(--shadow-soft);
+    }
+    100% { transform: translateX(-50%) scale(1); }
+  }
+
+  .confetti-piece {
+    position: fixed;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 90;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    animation: confettiPop 0.8s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  }
+  @keyframes confettiPop {
+    0% { transform: translate(-50%, -50%) translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+  }
 
   .toast {
     position: absolute;
@@ -577,7 +607,7 @@
     padding: 4px;
   }
 
-  .sheet-overlay, .confirm-overlay {
+  .sheet-overlay {
     position: absolute;
     inset: 0;
     background: rgba(10, 16, 13, 0.45);
@@ -589,11 +619,10 @@
     transition: opacity 0.25s ease;
     z-index: 20;
   }
-  .sheet-overlay.open, .confirm-overlay.open {
+  .sheet-overlay.open {
     opacity: 1;
     pointer-events: auto;
   }
-  .confirm-overlay { align-items: center; padding: 24px; }
 
   .sheet {
     width: 100%;
@@ -689,23 +718,6 @@
   .btn-primary { background: var(--accent); color: var(--accent-ink); }
   .btn-primary:disabled { opacity: 0.4; }
   .btn-primary:disabled:active { transform: none; }
-  .btn-danger { background: var(--danger); color: #fff; }
-
-  .confirm-box {
-    width: 100%;
-    max-width: 340px;
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-    padding: 22px;
-    box-shadow: var(--shadow);
-  }
-  .confirm-box p {
-    margin: 0;
-    font-size: 17px;
-    font-weight: 600;
-    text-align: center;
-    color: var(--ink);
-  }
 
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.001s !important; transition-duration: 0.001s !important; }
@@ -789,16 +801,6 @@
       </div>
     </div>
   </div>
-
-  <div class="confirm-overlay" id="confirmOverlay">
-    <div class="confirm-box">
-      <p>Excluir esta atividade?</p>
-      <div class="sheet-actions">
-        <button class="btn btn-ghost" id="confirmCancel">Cancelar</button>
-        <button class="btn btn-danger" id="confirmDelete">Excluir</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -821,7 +823,6 @@
     prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>',
     next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
     edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
-    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>',
     grip: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>',
     empty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/><path d="M8 3v3M16 3v3"/></svg>',
     sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>',
@@ -850,8 +851,7 @@
     tasks: load(STORAGE_KEY, []),
     activeTab: load(TAB_KEY, "pendente"),
     selectedDate: todayStr(),
-    editingId: null,
-    deletingId: null
+    editingId: null
   };
 
   state.tasks.forEach(function (t) {
@@ -921,10 +921,6 @@
   var priorityPicker = document.getElementById("priorityPicker");
   var sheetCancel = document.getElementById("sheetCancel");
   var sheetSave = document.getElementById("sheetSave");
-
-  var confirmOverlay = document.getElementById("confirmOverlay");
-  var confirmCancel = document.getElementById("confirmCancel");
-  var confirmDelete = document.getElementById("confirmDelete");
 
   var selectedPriority = "media";
 
@@ -1014,14 +1010,13 @@
           '<h3></h3>' +
           '<div class="task-top-right">' +
             '<span class="priority-chip priority-' + task.priority + '">' + PRIORITY_LABELS[task.priority] + '</span>' +
-            '<button type="button" class="drag-handle" aria-label="Arrastar para excluir">' + ICONS.grip + '</button>' +
+            '<button type="button" class="drag-handle" aria-label="Arrastar para concluir ou excluir">' + ICONS.grip + '</button>' +
           '</div>' +
         '</div>' +
         descHtml +
         '<div class="task-actions">' +
           '<button class="icon-btn" data-action="prev" aria-label="Mover para etapa anterior"' + (colIndex === 0 ? " disabled" : "") + '>' + ICONS.prev + '</button>' +
           '<button class="icon-btn" data-action="edit" aria-label="Editar atividade">' + ICONS.edit + '</button>' +
-          '<button class="icon-btn" data-action="delete" aria-label="Excluir atividade">' + ICONS.trash + '</button>' +
           '<div class="spacer"></div>' +
           '<button class="icon-btn" data-action="next" aria-label="Mover para próxima etapa"' + (colIndex === COLUMNS.length - 1 ? " disabled" : "") + '>' + ICONS.next + '</button>' +
         '</div>';
@@ -1032,7 +1027,6 @@
       card.querySelector('[data-action="prev"]').addEventListener("click", function () { moveTask(task.id, -1); });
       card.querySelector('[data-action="next"]').addEventListener("click", function () { moveTask(task.id, 1); });
       card.querySelector('[data-action="edit"]').addEventListener("click", function () { openSheet(task.id); });
-      card.querySelector('[data-action="delete"]').addEventListener("click", function () { openConfirm(task.id); });
       initCardDrag(card, task.id);
 
       cardListEl.appendChild(card);
@@ -1058,6 +1052,7 @@
     renderTabs();
     renderProgress();
     renderCards();
+    if (task.column === "feito") celebrateCompletion();
   }
 
   function renderAll() {
@@ -1172,7 +1167,7 @@
     if (dateInput.value) goToDate(dateInput.value);
   });
 
-  // ---- Delete (shared by button-confirm and drag-to-trash) ----
+  // ---- Delete (drag-to-trash only) ----
   function deleteTaskById(id, withUndo) {
     var idx = state.tasks.findIndex(function (t) { return t.id === id; });
     if (idx === -1) return;
@@ -1202,6 +1197,7 @@
     renderTabs();
     renderProgress();
     renderCards();
+    celebrateCompletion();
     showActionToast('"' + task.title + '" concluída', function () {
       task.column = prevColumn;
       saveTasks();
@@ -1209,6 +1205,40 @@
       renderProgress();
       renderCards();
     });
+  }
+
+  // ---- Celebration burst played whenever a task reaches "Concluído" ----
+  var CONFETTI_COLORS = ["var(--accent)", "var(--warn)", "var(--info)"];
+
+  function celebrateCompletion() {
+    doneZone.classList.remove("celebrate");
+    void doneZone.offsetWidth;
+    doneZone.classList.add("celebrate");
+
+    var rect = doneZone.getBoundingClientRect();
+    var originX = rect.left + rect.width / 2;
+    var originY = rect.top + rect.height / 2;
+    var pieceCount = 16;
+
+    for (var i = 0; i < pieceCount; i++) {
+      var piece = document.createElement("span");
+      piece.className = "confetti-piece";
+      var angle = (Math.PI * 2 * i) / pieceCount + (Math.random() * 0.5 - 0.25);
+      var distance = 55 + Math.random() * 55;
+      var dx = Math.cos(angle) * distance;
+      var dy = Math.sin(angle) * distance - 45;
+      piece.style.left = originX + "px";
+      piece.style.top = originY + "px";
+      piece.style.setProperty("--dx", dx + "px");
+      piece.style.setProperty("--dy", dy + "px");
+      piece.style.setProperty("--rot", (Math.random() * 360 - 180) + "deg");
+      piece.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      document.body.appendChild(piece);
+      (function (p) {
+        p.addEventListener("animationend", function () { p.remove(); });
+        setTimeout(function () { if (p.parentNode) p.remove(); }, 1000);
+      })(piece);
+    }
   }
 
   var actionTimer = null;
@@ -1230,25 +1260,6 @@
     clearTimeout(actionTimer);
     hideUndoToast();
     undo();
-  });
-
-  // ---- Delete confirm (tap trash icon on card) ----
-  function openConfirm(id) {
-    state.deletingId = id;
-    confirmOverlay.classList.add("open");
-  }
-  function closeConfirm() {
-    confirmOverlay.classList.remove("open");
-    state.deletingId = null;
-  }
-  confirmCancel.addEventListener("click", closeConfirm);
-  confirmOverlay.addEventListener("click", function (e) {
-    if (e.target === confirmOverlay) closeConfirm();
-  });
-  confirmDelete.addEventListener("click", function () {
-    var id = state.deletingId;
-    closeConfirm();
-    deleteTaskById(id, true);
   });
 
   // ---- Drag a card to the trash bin (bottom-left) to delete it ----
