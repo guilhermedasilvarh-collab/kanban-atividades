@@ -108,6 +108,7 @@
   }
 
   * { box-sizing: border-box; }
+  button { touch-action: manipulation; }
   html, body { height: 100%; }
   body {
     margin: 0;
@@ -160,8 +161,8 @@
     color: var(--ink);
   }
   .theme-toggle {
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
     border-radius: 12px;
     border: none;
     background: var(--surface-alt);
@@ -183,8 +184,8 @@
     flex-shrink: 0;
   }
   .date-nav-btn {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     border-radius: 12px;
     border: none;
     background: var(--surface-alt);
@@ -287,7 +288,8 @@
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    padding: 10px 6px 9px;
+    padding: 13px 6px 12px;
+    min-height: 50px;
     border: none;
     border-radius: var(--radius-md);
     background: var(--surface-alt);
@@ -412,8 +414,8 @@
     border-top: 1px solid var(--border);
   }
   .icon-btn {
-    width: 44px;
-    height: 44px;
+    width: 50px;
+    height: 50px;
     border-radius: 12px;
     border: none;
     background: var(--surface-alt);
@@ -687,7 +689,8 @@
   }
   .priority-pill {
     flex: 1;
-    padding: 12px 6px;
+    padding: 14px 6px;
+    min-height: 48px;
     border-radius: var(--radius-md);
     border: 1.5px solid var(--border);
     background: var(--surface-alt);
