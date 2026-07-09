@@ -37,7 +37,6 @@
     --radius-lg: 22px;
     --radius-md: 14px;
     --radius-sm: 10px;
-    --app-height: 100dvh;
     color-scheme: light;
   }
 
@@ -127,7 +126,8 @@
   .shell {
     width: 100%;
     max-width: 460px;
-    height: var(--app-height);
+    height: 100vh;
+    height: 100svh;
     background: var(--bg);
     display: flex;
     flex-direction: column;
@@ -842,20 +842,6 @@
 <script>
 (function () {
   "use strict";
-
-  // 100dvh is unreliable on some Android browsers (miscalculates around the
-  // gesture-nav bar and drifts further on each reload), so the app's real
-  // height is measured in JS and kept in sync instead.
-  function setAppHeight() {
-    var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-    document.documentElement.style.setProperty("--app-height", h + "px");
-  }
-  setAppHeight();
-  window.addEventListener("resize", setAppHeight);
-  window.addEventListener("orientationchange", setAppHeight);
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", setAppHeight);
-  }
 
   var STORAGE_KEY = "kanban-diario-v1";
   var TAB_KEY = "kanban-diario-tab-v1";
