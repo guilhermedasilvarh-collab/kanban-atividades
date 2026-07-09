@@ -277,6 +277,30 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .all-done-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 14.5px;
+    font-weight: 700;
+    animation: allDonePop 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .all-done-banner.hidden { display: none; }
+  .all-done-banner svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+  @keyframes allDonePop {
+    0% { opacity: 0; transform: scale(0.92) translateY(-4px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
   .tabs {
     display: flex;
     gap: 8px;
@@ -760,6 +784,10 @@
   <div class="progress-wrap">
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     <p class="progress-label" id="progressLabel">Nenhuma atividade ainda</p>
+    <div class="all-done-banner hidden" id="allDoneBanner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6"/></svg>
+      <span id="allDoneText"></span>
+    </div>
   </div>
 
   <nav class="tabs" id="tabs"></nav>
@@ -927,6 +955,8 @@
   var todayPill = document.getElementById("todayPill");
   var progressFill = document.getElementById("progressFill");
   var progressLabel = document.getElementById("progressLabel");
+  var allDoneBanner = document.getElementById("allDoneBanner");
+  var allDoneText = document.getElementById("allDoneText");
   var tabsEl = document.getElementById("tabs");
   var cardListEl = document.getElementById("cardList");
   var fabAdd = document.getElementById("fabAdd");
@@ -968,6 +998,14 @@
     todayPill.classList.toggle("hidden", rel === "Hoje");
   }
 
+  function allDoneMessage() {
+    var rel = relativeLabel(state.selectedDate);
+    if (rel === "Hoje") return "Parabéns! Você concluiu todas as atividades de hoje.";
+    if (rel === "Ontem") return "Parabéns! Você concluiu todas as atividades de ontem.";
+    if (rel === "Amanhã") return "Parabéns! Você concluiu todas as atividades de amanhã.";
+    return "Parabéns! Você concluiu todas as atividades deste dia.";
+  }
+
   function renderProgress() {
     var dayTasks = state.tasks.filter(function (t) { return t.date === state.selectedDate; });
     var total = dayTasks.length;
@@ -977,6 +1015,10 @@
     progressLabel.textContent = total
       ? done + " de " + total + " atividades concluídas (" + pct + "%)"
       : "Nenhuma atividade neste dia";
+
+    var allDone = total > 0 && done === total;
+    allDoneBanner.classList.toggle("hidden", !allDone);
+    if (allDone) allDoneText.textContent = allDoneMessage();
   }
 
   function countFor(colId) {
