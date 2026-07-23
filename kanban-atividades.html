@@ -215,7 +215,15 @@
     width: auto;
     padding: 10px;
     border-radius: 999px;
+    background: var(--surface-alt);
+    transition: padding 0.2s ease, border-radius 0.2s ease, background 0.2s ease;
   }
+  .meetings-banner.collapsed .meetings-banner-head svg { color: var(--ink-faint); }
+  .meetings-banner.collapsed.has-meetings {
+    background: var(--info);
+    box-shadow: 0 0 0 4px var(--info-soft);
+  }
+  .meetings-banner.collapsed.has-meetings .meetings-banner-head svg { color: var(--accent-ink); }
   .meetings-banner.collapsed .meetings-refresh-btn,
   .meetings-banner.collapsed .meetings-toggle span,
   .meetings-banner.collapsed .meetings-list {
@@ -1708,6 +1716,7 @@
     }
     calendarSettingsBtn.classList.add("configured");
     meetingsBanner.classList.remove("hidden");
+    meetingsBanner.classList.remove("has-meetings");
 
     var rel = relativeLabel(state.selectedDate);
     meetingsTitle.textContent = rel === "Hoje" ? "Reuniões de hoje" : rel ? "Reuniões de " + rel.toLowerCase() : "Reuniões do dia";
@@ -1730,6 +1739,7 @@
       meetingsList.innerHTML = '<li class="meetings-empty">Nenhuma reunião' + (rel === "Hoje" ? " hoje" : "") + '.</li>';
       return;
     }
+    meetingsBanner.classList.add("has-meetings");
     meetingsList.innerHTML = "";
     events.forEach(function (ev) {
       var li = document.createElement("li");
